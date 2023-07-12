@@ -1,4 +1,1 @@
-﻿#include"Device.h"
-Device::Device(const char* address) {
-	return;
-}
+﻿#include"device.h"
