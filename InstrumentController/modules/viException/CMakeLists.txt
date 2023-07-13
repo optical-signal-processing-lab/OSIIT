@@ -7,6 +7,7 @@
 	link_libraries(${LIB_PATH}/visa64.lib)
 
 elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
+	# TODO:
 	message(STATUS "in Linux")
 endif()
 
