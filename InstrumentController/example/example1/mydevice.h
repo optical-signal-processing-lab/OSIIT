@@ -6,12 +6,15 @@
 #include <viexception.h>
 #include <string>
 #include <visa.h>
+#include <Windows.h>
 
+
+#define BUFF_LENTH 1024
 class MyDevice :public Device {
 public:
 	std::string getName();
 	std::string sendCmd(const char* cmd);
-
+	void InteractiveMode();
 	static MyDevice& getMyDevice(const char* address) {
 		static MyDevice myDevice(address);
 		return myDevice;
@@ -28,6 +31,6 @@ private:
 	ViStatus status = 0;
 	ViSession defaultRM = 0, instr = 0;
 	ViUInt32 retCount = 0;
-	ViChar buffer[256] = { 0 };
+	ViChar buffer[BUFF_LENTH] = { 0 };
 };
 #endif // !EXAMPLE_MYDEVICE
