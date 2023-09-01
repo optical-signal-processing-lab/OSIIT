@@ -2,16 +2,17 @@
 #ifndef EXAMPLE_MYDEVICE
 #define EXAMPLE_MYDEVICE
 
+#include "msgsender.h"
 #include <device.h>
 #include <viexception.h>
 #include <string>
 #include <visa.h>
 #include <Windows.h>
 
-
 #define BUFF_LENTH 1024
 class MyDevice :public Device {
 public:
+	MsgSender* myUDP;
 	std::string getName();
 	std::string sendCmd(const char* cmd);
 	void InteractiveMode();

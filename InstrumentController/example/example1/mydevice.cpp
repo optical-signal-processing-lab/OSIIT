@@ -24,7 +24,10 @@ MyDevice::MyDevice(const char* address) :Device(address)
 MyDevice::~MyDevice() {
 	throwIfFailed(viClose(instr));
 	throwIfFailed(viClose(defaultRM));
+	delete myUDP;
+	color(15);
 	printf("Disconneted\n");
+	color(7);
 }
 
 std::string MyDevice::getName() {
@@ -67,12 +70,29 @@ void MyDevice::InteractiveMode()
 			color(7);
 			std::cin.getline(cmd,256);
 			if (cmd[0] == 'q') {
+				char q[5] = "quit";
+				myUDP->sendMsg(q, 5);
 				break;
 			}
-			color(11);
-			auto res = sendCmd((const char*)cmd);
-			if (!res.empty()) {
-				std::cout << res << std::endl;
+			if (cmd[0] == 'v') {
+				auto startwl = sendCmd("STARTWL?");
+				auto stopwl = sendCmd("STOPWL?");
+				auto tra = sendCmd("TRA?");
+				std::string info = startwl + ";" + stopwl + ";" + tra;
+				myUDP->sendMsg((char*)info.c_str(), info.length());
+			}
+			else if (cmd[0] == 'x') {
+				auto rl = sendCmd("RL?;");
+				auto lg = sendCmd("LG?;");
+				std::string info = rl + ";" + lg;
+				myUDP->sendMsg((char*)info.c_str(), info.length());
+			}
+			else {
+				color(11);
+				auto res = sendCmd((const char*)cmd);
+				if (!res.empty()) {
+					std::cout << res << std::endl;
+				}
 			}
 		}
 		catch (ViException& e) {
@@ -92,6 +112,7 @@ void MyDevice::deviceInit(const char* address)
 	throwIfFailed(viWrite(instr, reinterpret_cast<ViConstBuf>("ID?\n"), 4, &retCount));
 	throwIfFailed(viRead(instr, reinterpret_cast<ViPBuf>(buffer), BUFF_LENTH, &retCount));
 
+	myUDP = new MsgSender("127.0.0.1", 8888);
 	name = bufferToString();
 }
 
